@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django_filters',
     "apps.accounts",
     "apps.organizations",
+     "apps.teams",
 ]
 
 MIDDLEWARE = [
