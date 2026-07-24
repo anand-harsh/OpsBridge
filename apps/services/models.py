@@ -17,19 +17,19 @@ class Service(models.Model):
         related_name="services",
     )
 
-    name = models.CharField(max_length=150)
-
+    name = models.CharField(max_length=120)
     description = models.TextField(blank=True)
 
     is_active = models.BooleanField(default=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
                 fields=["organization", "name"],
-                name="unique_service_per_organization",
+                name="unique_service_name_per_org",
             )
         ]
 

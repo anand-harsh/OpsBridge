@@ -73,7 +73,8 @@ class Incident(models.Model):
 
     def __str__(self):
         return self.title
-    
+
+
 class IncidentEvent(models.Model):
 
     class EventType(models.TextChoices):
@@ -103,14 +104,14 @@ class IncidentEvent(models.Model):
 
     message = models.TextField()
 
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.incident.title} - {self.event_type}"
-    
+
+
 class Comment(models.Model):
+
     incident = models.ForeignKey(
         Incident,
         on_delete=models.CASCADE,
@@ -127,4 +128,4 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.author.email} - {self.incident.title}"
+        return f"{self.author.email}"

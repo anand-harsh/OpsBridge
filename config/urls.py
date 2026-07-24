@@ -24,4 +24,16 @@ urlpatterns = [
     "api/organizations/",
     include("apps.organizations.urls"),
 ),
+    path(
+    "api/services/",
+    include("apps.services.urls"),
+),
+    path(
+    "api/teams/",
+    include("apps.teams.urls"),
+),
+    path(
+    "api/incidents/",
+    include("apps.incidents.urls"),
+),
 ]
