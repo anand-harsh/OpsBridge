@@ -4,6 +4,8 @@ from .views import (
     IncidentDetailView,
     IncidentListCreateView,
     IncidentSeverityUpdateView,
+    AssignCommanderView,
+    IncidentStatusView,
 )
 
 urlpatterns = [
@@ -12,5 +14,13 @@ urlpatterns = [
     path(
     "<int:pk>/severity/",
     IncidentSeverityUpdateView.as_view(),
+),
+    path(
+    "<int:pk>/commander/",
+    AssignCommanderView.as_view(),
+),
+    path(
+    "<int:pk>/status/",
+    IncidentStatusView.as_view(),
 ),
 ]

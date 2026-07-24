@@ -2,6 +2,9 @@ from rest_framework import serializers
 
 from .models import Incident
 from .services import create_incident
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class IncidentSerializer(serializers.ModelSerializer):
@@ -38,4 +41,15 @@ class IncidentSerializer(serializers.ModelSerializer):
 class ChangeSeveritySerializer(serializers.Serializer):
     severity = serializers.ChoiceField(
         choices=Incident.Severity.choices
+    )
+
+class AssignCommanderSerializer(serializers.Serializer):
+    commander = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all()
+    )
+    
+class ChangeStatusSerializer(serializers.Serializer):
+
+    status = serializers.ChoiceField(
+        choices=Incident.Status.choices
     )
