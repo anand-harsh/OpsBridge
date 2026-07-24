@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "apps.organizations",
      "apps.teams",
      "apps.services",
+     "apps.incidents",
 ]
 
 MIDDLEWARE = [
