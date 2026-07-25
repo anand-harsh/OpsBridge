@@ -14,7 +14,7 @@ from .serializers import (
     IncidentSerializer,
 )
 from django.shortcuts import get_object_or_404
-from .selectors import get_incident_for_user
+from .selectors import get_incident_for_user, list_incidents
 from .services import (
     create_incident,
     change_severity,
@@ -27,24 +27,68 @@ from .selectors import (
     get_incident_for_user,
     get_incident_timeline,
 )
+
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import (
+    OrderingFilter,
+    SearchFilter,
+)
+
+from .filters import IncidentFilter
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.permissions import IsAuthenticated
+
+# class IncidentListCreateView(generics.ListCreateAPIView):
+
+#     serializer_class = IncidentSerializer
+
+#     def get_queryset(self):
+#         return (
+#             Incident.objects.filter(
+#                 organization__memberships__user=self.request.user
+#             )
+#             .select_related(
+#                 "organization",
+#                 "service",
+#                 "commander",
+#                 "created_by",
+#             )
+#             .distinct()
+#         )
+
 class IncidentListCreateView(generics.ListCreateAPIView):
 
     serializer_class = IncidentSerializer
 
-    def get_queryset(self):
-        return (
-            Incident.objects.filter(
-                organization__memberships__user=self.request.user
-            )
-            .select_related(
-                "organization",
-                "service",
-                "commander",
-                "created_by",
-            )
-            .distinct()
-        )
+    permission_classes = [IsAuthenticated]
 
+    filter_backends = [
+        DjangoFilterBackend,
+        SearchFilter,
+        OrderingFilter,
+    ]
+
+    filterset_class = IncidentFilter
+
+    search_fields = [
+        "title",
+        "description",
+        "service__name",
+    ]
+
+    ordering_fields = [
+        "created_at",
+        "severity",
+        "status",
+    ]
+
+    ordering = [
+        "-created_at",
+    ]
+
+    def get_queryset(self):
+        return list_incidents(self.request.user)
 
 class IncidentDetailView(generics.RetrieveAPIView):
 

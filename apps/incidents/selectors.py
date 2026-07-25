@@ -1,30 +1,52 @@
-from .models import Incident
 from django.shortcuts import get_object_or_404
 
 from itertools import chain
 
-from .models import (
-    IncidentEvent,
-    Comment,
-)
+from django.db.models import Prefetch
 
+from .models import Incident, IncidentEvent, Comment
+
+
+# def list_incidents(user):
+#     return (
+#         Incident.objects.filter(
+#             organization__memberships__user=user
+#         )
+#         .select_related(
+#             "organization",
+#             "service",
+#             "commander",
+#             "created_by",
+#         )
+#         .distinct()
+#         .order_by("-created_at")
+#     )
 
 
 def list_incidents(user):
+
     return (
         Incident.objects.filter(
             organization__memberships__user=user
         )
         .select_related(
-            "organization",
             "service",
             "commander",
             "created_by",
+            "organization",
+        )
+        .prefetch_related(
+            Prefetch(
+                "events",
+                queryset=IncidentEvent.objects.select_related("user")
+            ),
+            Prefetch(
+                "comments",
+                queryset=Comment.objects.select_related("author")
+            ),
         )
         .distinct()
-        .order_by("-created_at")
     )
-
 
 def get_incident(pk):
     return Incident.objects.select_related(
