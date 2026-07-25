@@ -48,6 +48,7 @@ INSTALLED_APPS = [
      "apps.teams",
      "apps.services",
      "apps.incidents",
+     "apps.dashboard",
 ]
 
 MIDDLEWARE = [
