@@ -1,11 +1,13 @@
 from django.urls import path
 
 from .views import (
+    IncidentCommentView,
     IncidentDetailView,
     IncidentListCreateView,
     IncidentSeverityUpdateView,
     AssignCommanderView,
     IncidentStatusView,
+    IncidentTimelineView,
 )
 
 urlpatterns = [
@@ -22,5 +24,13 @@ urlpatterns = [
     path(
     "<int:pk>/status/",
     IncidentStatusView.as_view(),
+),
+    path(
+    "<int:pk>/comments/",
+    IncidentCommentView.as_view(),
+),
+    path(
+    "<int:pk>/timeline/",
+    IncidentTimelineView.as_view(),
 ),
 ]

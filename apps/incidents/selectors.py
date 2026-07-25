@@ -1,7 +1,12 @@
 from .models import Incident
 from django.shortcuts import get_object_or_404
 
-from .models import Incident
+from itertools import chain
+
+from .models import (
+    IncidentEvent,
+    Comment,
+)
 
 
 
@@ -41,3 +46,22 @@ def get_incident_for_user(pk, user):
         pk=pk,
         organization__memberships__user=user,
     )
+
+
+def get_incident_timeline(incident):
+
+    events = IncidentEvent.objects.filter(
+        incident=incident
+    ).select_related("user")
+
+    comments = Comment.objects.filter(
+        incident=incident
+    ).select_related("author")
+
+    timeline = sorted(
+        chain(events, comments),
+        key=lambda x: x.created_at,
+        reverse=True,
+    )
+
+    return timeline

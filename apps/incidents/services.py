@@ -4,6 +4,9 @@ from django.utils import timezone
 from .models import Incident, IncidentEvent
 from django.db import transaction
 from django.core.exceptions import ValidationError
+from django.db import transaction
+
+from .models import Comment, IncidentEvent
 
 VALID_TRANSITIONS = {
     Incident.Status.OPEN: [
@@ -135,3 +138,23 @@ def change_status(
     )
 
     return incident
+
+
+
+@transaction.atomic
+def add_comment(*, incident, author, body):
+
+    comment = Comment.objects.create(
+        incident=incident,
+        author=author,
+        body=body,
+    )
+
+    IncidentEvent.objects.create(
+        incident=incident,
+        user=author,
+        event_type=IncidentEvent.EventType.COMMENT_ADDED,
+        message=body,
+    )
+
+    return comment

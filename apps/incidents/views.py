@@ -1,7 +1,7 @@
 from rest_framework import generics
 
 from .models import Incident
-from .serializers import ChangeStatusSerializer, IncidentSerializer
+from .serializers import ChangeStatusSerializer, CommentSerializer, IncidentSerializer, TimelineSerializer
 from rest_framework import generics, status
 from rest_framework.response import Response
 
@@ -21,7 +21,12 @@ from .services import (
     assign_commander,
     change_status,
 )
+from rest_framework.views import APIView
 
+from .selectors import (
+    get_incident_for_user,
+    get_incident_timeline,
+)
 class IncidentListCreateView(generics.ListCreateAPIView):
 
     serializer_class = IncidentSerializer
@@ -125,3 +130,41 @@ class IncidentStatusView(generics.GenericAPIView):
         return Response(
             IncidentSerializer(incident).data
         )
+        
+class IncidentCommentView(generics.CreateAPIView):
+
+    serializer_class = CommentSerializer
+
+    def get_incident(self):
+        return get_incident_for_user(
+            self.kwargs["pk"],
+            self.request.user,
+        )
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["incident"] = self.get_incident()
+        return context
+    
+
+
+
+class IncidentTimelineView(APIView):
+
+    def get(self, request, pk):
+
+        incident = get_incident_for_user(
+            pk,
+            request.user,
+        )
+
+        timeline = get_incident_timeline(
+            incident
+        )
+
+        serializer = TimelineSerializer(
+            timeline,
+            many=True,
+        )
+
+        return Response(serializer.data)
